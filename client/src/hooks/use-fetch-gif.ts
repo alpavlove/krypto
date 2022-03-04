@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const APIKEY = import.meta.env.VITE_GIPHY_API
 
-export function useFetch({ keyword = '' }: { keyword?: string }) {
+export function useFetchGif({ keyword = '' }: { keyword?: string }) {
   const [gifUrl, setGifUrl] = useState('')
 
-  async function fetchGifs() {
+  const fetchGifs = useCallback(async () => {
     try {
       const response = await fetch(
         `https://api.giphy.com/v1/gifs/search?api_key=${APIKEY}&q=${keyword
@@ -20,13 +20,15 @@ export function useFetch({ keyword = '' }: { keyword?: string }) {
         'https://metro.co.uk/wp-content/uploads/2015/05/pokemon_crying.gif?quality=90&strip=all&zoom=1&resize=500%2C284',
       )
     }
-  }
+  }, [keyword])
 
   useEffect(() => {
-    if (keyword) {
-      fetchGifs()
+    if (!keyword) {
+      return
     }
-  }, [keyword])
+
+    fetchGifs()
+  }, [keyword, fetchGifs])
 
   return gifUrl
 }

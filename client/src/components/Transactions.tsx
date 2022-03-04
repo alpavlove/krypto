@@ -1,7 +1,6 @@
-import { useFetch } from '../hooks/use-fetch'
-import { dummyData } from '../utils/dummy-data'
-
 import { useTransactionContext } from '../contexts/transaction'
+import { useFetchGif } from '../hooks/use-fetch-gif'
+
 import { shortenAddress } from '../utils/shorten-address'
 
 type TransactionCardProps = {
@@ -23,7 +22,7 @@ function TransactionsCard({
   amount,
   url,
 }: TransactionCardProps) {
-  const gifUrl = useFetch({ keyword })
+  const gifUrl = useFetchGif({ keyword })
 
   return (
     <div
@@ -87,7 +86,7 @@ export function Transactions() {
         )}
 
         <div className="flex flex-wrap justify-center items-center mt-10">
-          {[...dummyData, ...transactions].reverse().map((transaction, i) => (
+          {transactions.reverse().map((transaction, i) => (
             <TransactionsCard key={i} {...transaction} />
           ))}
         </div>

@@ -1,21 +1,22 @@
-import { ChangeEvent, HTMLInputTypeAttribute, MouseEventHandler } from 'react'
+import { ChangeEvent, HTMLInputTypeAttribute, MouseEventHandler, useCallback } from 'react'
 import { AiFillPlayCircle } from 'react-icons/ai'
-import { SiEthereum } from 'react-icons/si'
 import { BsInfoCircle } from 'react-icons/bs'
+import { SiEthereum } from 'react-icons/si'
 
-import { shortenAddress } from '../utils/shorten-address'
-import { Loader } from './Loader'
 import { useTransactionContext } from '../contexts/transaction'
+import { shortenAddress } from '../utils/shorten-address'
+
+import { Loader } from './Loader'
 
 const companyCommonStyles =
   'min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white'
 
 type InputProps = {
   placeholder: string
-  name: string
+  name: 'addressTo' | 'amount' | 'keyword' | 'message'
   type: HTMLInputTypeAttribute
   value?: string
-  handleChange: (event: ChangeEvent, name: string) => void
+  handleChange: (event: ChangeEvent, name: 'addressTo' | 'amount' | 'keyword' | 'message') => void
 }
 
 function Input({ placeholder, name, type, value, handleChange }: InputProps) {
@@ -32,20 +33,16 @@ function Input({ placeholder, name, type, value, handleChange }: InputProps) {
 }
 
 export function Welcome() {
-  const { currentAccount, connectWallet, handleChange, sendTransaction, formData, isLoading } =
+  const { currentAccount, connectWallet, handleChange, sendTransaction, isLoading, formData } =
     useTransactionContext()
 
-  const handleSubmit: MouseEventHandler<HTMLButtonElement> = (e) => {
-    const { addressTo, amount, keyword, message } = formData
-
-    e.preventDefault()
-
-    if (!addressTo || !amount || !keyword || !message) {
-      return
-    }
-
-    sendTransaction()
-  }
+  const handleSubmit: MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      e.preventDefault()
+      sendTransaction()
+    },
+    [sendTransaction],
+  )
 
   return (
     <div className="flex w-full justify-center items-center">
@@ -98,24 +95,28 @@ export function Welcome() {
               placeholder="Address To"
               name="addressTo"
               type="text"
+              value={formData.addressTo}
               handleChange={handleChange}
             />
             <Input
               placeholder="Amount (ETH)"
               name="amount"
               type="number"
+              value={formData.amount}
               handleChange={handleChange}
             />
             <Input
               placeholder="Keyword (Gif)"
               name="keyword"
               type="text"
+              value={formData.keyword}
               handleChange={handleChange}
             />
             <Input
               placeholder="Enter Message"
               name="message"
               type="text"
+              value={formData.message}
               handleChange={handleChange}
             />
 
